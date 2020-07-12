@@ -1,0 +1,28 @@
+<%- include ("layouts/header.ejs") %>
+ <div class="col-md-12">
+    <div class="card">
+        <!-- Tab panes -->
+        <div class="card-body">
+            <form action ="/admin/devices/edit" method="POST" class="form-horizontal form-material">
+                <div class="form-group">
+                    <label class="col-md-12">ID</label>
+                    <div class="col-md-12">
+                        <input value="<%- device_id %>" name="device_id"  type="text" class="form-control form-control-line" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="example-email" class="col-md-12">Name</label>
+                    <div class="col-md-12">
+                        <input type="text" name="device_name" class="form-control form-control-line" name="example-email" id="example-email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <button class="btn btn-success">Update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+ </div>
+<%- include ("layouts/footer.ejs") %>

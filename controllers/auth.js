@@ -1,5 +1,10 @@
 var airvantage = require('../model/airvantage');
 
+exports.check = (req, res, next) => {
+    if(!req.session.token) res.redirect("/signin");
+    next();
+}
+
 exports.signin = {};
 
 exports.signin.get = function(req, res){
@@ -22,10 +27,11 @@ exports.signin.post = function(req, resp){
             //req.session.access_token = res.access_token;
             // req.session.refresh_token = res.refresh_token;
             // req.session.expires_at = new Date().getTime() + res.expires_in * 1000;
+            console.log(req.session.token);
             if (req.session.originalUrl)
                 resp.redirect(req.session.originalUrl);
             else
-                resp.redirect('/');
+                resp.redirect('/admin');
         }
     });
 }

@@ -1,21 +1,27 @@
 var host = "sensorhub.tech";
 var authurl = "/api/";
 const https = require("https");
+var _ = require("underscore");
 
 var query_get_ctor = function (host, base, url) {
-    return function (accesstoken) {
+    return function (params) {
         return function (callback) {
+
+            var u = _.reduce(_.pairs(params), function (orgURL, prmt) {
+                return orgURL.replace(":" + prmt[0], prmt[1]);
+            }, url);
+
             // define url option
             var options = {
                 host: host,
-                path: base + url,
+                path: base + u,
                 method: "GET",
                 headers: {
                     'content-type': 'application/json', 
-                    authorization: 'Bearer ' + accesstoken
+                    authorization: 'Bearer ' + params.access_token
                 }
             };
-            console.log("GET options: ",options)
+        
             // execute the request
             https
                 .request(options, function (resp) {
@@ -49,25 +55,28 @@ var query_get_ctor = function (host, base, url) {
 };
 
 var query_post_ctor = function (host, base, url) {
-    return function (params, content) {
+    return function (params) {
         return function (callback) {
-           
+            var u = _.reduce(_.pairs(params), 
+            function (orgURL, prmt) {
+                return orgURL.replace(":" + prmt[0], prmt[1]);
+            }, url);
 
             const data = JSON.stringify(params);
 
             const options = {
                 hostname: host,
                 port: 443,
-                path: base+url,
-                method: "POST",
+                path: base+u,
+                method: params.method ? params.method : "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Content-Length": data.length,
+                    "Authorization": "Bearer " + params.access_token
                 },
             };
-
+            console.log(options)
             
-
             const req = https.request(options, (res) => {
                 var value = "";
 
@@ -109,3 +118,11 @@ exports.token_query = query_post_ctor(host, authurl, "login");
 exports.register = query_post_ctor(host, authurl, "register");
 
 exports.getUser = query_get_ctor(host,authurl, "me")
+
+exports.devices_query = query_get_ctor(host,authurl, "device");
+
+exports.data_query =  query_get_ctor(host,authurl, "get_device_info/:device_id");
+
+exports.device_delete = query_post_ctor (host,authurl, "provision")
+
+exports.device_update = query_post_ctor (host,authurl, "update_device")
